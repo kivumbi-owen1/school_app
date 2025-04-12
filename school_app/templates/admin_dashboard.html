@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    body {
+        background-color: #f4f7fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container h2 {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        background-color: #ffffff;
+        border-collapse: collapse;
+        width: 100%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+        vertical-align: middle;
+        text-align: left;
+    }
+
+    thead.thead-dark {
+        background-color: #343a40;
+        color: #fff;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-sm {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 20px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+    .btn-info:hover {
+        background-color: #138496;
+        transform: scale(1.05);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+        .container h2 {
+            font-size: 1.5rem;
+        }
+
+        .btn-sm {
+            margin-bottom: 5px;
+        }
+    }
+</style>
+
+
+<div class="container mt-5 pt-2">
+    <h2>Admin Dashboard</h2>
+
+    <!-- Search Form -->
+    <form method="GET" action="{{ url_for('main.admin_dashboard') }}" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control" placeholder="Search by student name, reg number, or course..." value="{{ request.args.get('query', '') }}">
+            <button class="btn btn-info" type="submit">Search</button>
+        </div>
+    </form>
+    
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Complaint ID</th>
+                    <th>Student Name</th>
+                    <th>Reg Number</th>
+                    <th>Course (Code)</th>
+                    <th>Complaint</th>
+                    <th>Lecturer</th>
+                    <th>Lecturer Email</th>
+                    <th>Date Filed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for complaint in complaints %}
+                <tr>
+                    <td>{{ complaint.complaint_id }}</td>
+                    <td>{{ complaint.student_names }}</td>
+                    <td>{{ complaint.student_registration_number }}</td>
+                    <td>{{ complaint.course_name }} ({{ complaint.course_code }})</td>
+                    <td>{{ complaint.complaint_text|truncate(50) }}</td>
+                    <td>{{ complaint.lecturer_names }}</td>
+                    <td>{{ complaint.lecturer_email }}</td>
+                    <td>{{ complaint.date_filed.strftime('%Y-%m-%d') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center">No complaints found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

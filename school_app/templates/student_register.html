@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+:root {
+        --primary-color: #4361ee;
+        --primary-hover: #3a56d4;
+        --error-color: #ef233c;
+        --success-color: #4cc9f0;
+        --text-color: #2b2d42;
+        --light-gray: #f8f9fa;
+        --border-color: #dee2e6;
+        --border-radius: 8px;
+        --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+    }
+
+    body {
+        margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #4361ee, #4cc9f0);
+    min-height: 100vh;
+    }
+
+    .signup-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 2.5rem;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .signup-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #4361ee, #4cc9f0);
+    }
+
+    h2 {
+        text-align: center;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        font-size: 0.95rem;
+        transition: var(--transition);
+        background-color: var(--light-gray);
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        background-color: white;
+    }
+
+    /* Error state for inputs */
+    .form-control.is-invalid {
+        border-color: var(--error-color);
+    }
+
+    .btn-primary {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-top: 0.5rem;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        color: var(--error-color);
+    }
+
+    .form-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .form-footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+
+    .form-footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Password strength indicator */
+    .password-strength {
+        height: 4px;
+        background: #e9ecef;
+        border-radius: 2px;
+        margin-top: 0.5rem;
+        overflow: hidden;
+    }
+
+    .password-strength::before {
+        content: '';
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--error-color);
+        transition: width 0.3s ease;
+    }
+
+    .password-strength[data-strength="1"]::before {
+        width: 25%;
+        background: var(--error-color);
+    }
+
+    .password-strength[data-strength="2"]::before {
+        width: 50%;
+        background: #ffbe0b;
+    }
+
+    .password-strength[data-strength="3"]::before {
+        width: 75%;
+        background: #4cc9f0;
+    }
+
+    .password-strength[data-strength="4"]::before {
+        width: 100%;
+        background: #2ec4b6;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 576px) {
+        .signup-container {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+    }
+
+    /* Custom select styling */
+    select.form-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 1rem;
+    }
+</style>
+
+<div class="signup-container">
+    <h2>Create Your Account</h2>
+    
+    <form method="POST" action="{{ url_for('auth.student_register') }}" novalidate>
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.student_names.label }}
+            {{ form.student_names(class='form-control' + (' is-invalid' if form.student_names.errors else ''), placeholder='Enter your full name') }}
+            {% if form.student_names.errors %}
+                <div class="invalid-feedback">
+                    {{ form.student_names.errors[0] }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            {{ form.student_registration_number.label }}
+            {{ form.student_registration_number(class='form-control' + (' is-invalid' if form.student_registration_number.errors else ''), placeholder='Enter your registration number') }}
+            {% if form.student_registration_number.errors %}
+                <div class="invalid-feedback">
+                    {{ form.student_registration_number.errors[0] }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.program.label }}
+            {{ form.program(class='form-control' + (' is-invalid' if form.program.errors else ''), placeholder='Enter your program') }}
+            {% if form.program.errors %}
+                <div class="invalid-feedback">
+                    {{ form.program.errors[0] }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.department.label }}
+            {{ form.department(class='form-control' + (' is-invalid' if form.department.errors else ''), placeholder='Enter your department') }}
+            {% if form.department.errors %}
+                <div class="invalid-feedback">
+                    {{ form.department.errors[0] }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.year_of_study.label }}
+            {{ form.year_of_study(class='form-control' + (' is-invalid' if form.year_of_study.errors else '')) }}
+            {% if form.year_of_study.errors %}
+                <div class="invalid-feedback">
+                    {{ form.year_of_study.errors[0] }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.semester.label }}
+            {{ form.semester(class='form-control' + (' is-invalid' if form.semester.errors else '')) }}
+            {% if form.semester.errors %}
+                <div class="invalid-feedback">
+                    {{ form.semester.errors[0] }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.email.label }}
+            {{ form.email(class='form-control' + (' is-invalid' if form.email.errors else ''), placeholder='Enter your email') }}
+            {% if form.email.errors %}
+                <div class="invalid-feedback">
+                    {{ form.email.errors[0] }}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class='form-control' + (' is-invalid' if form.password.errors else ''), placeholder='Create a password', id='password') }}
+            <div class="password-strength" id="password-strength"></div>
+            {% if form.password.errors %}
+                <div class="invalid-feedback">
+                    {{ form.password.errors[0] }}
+                </div>
+            {% else %}
+                <small class="text-muted">Use 8+ characters with a mix of letters, numbers & symbols</small>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.confirm_password.label }}
+            {{ form.confirm_password(class='form-control' + (' is-invalid' if form.confirm_password.errors else ''), placeholder='Confirm your password') }}
+            {% if form.confirm_password.errors %}
+                <div class="invalid-feedback">
+                    {{ form.confirm_password.errors[0] }}
+                </div>
+            {% endif %}
+        </div>
+        
+        {{ form.submit(class='btn btn-primary') }}
+        
+        <div class="form-footer">
+            <p>Already have an account? <a href="{{ url_for('auth.student_login') }}">Login</a></p>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Password strength indicator
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthIndicator = document.getElementById('password-strength');
+        let strength = 0;
+        
+        // Check password length
+        if (password.length >= 8) strength += 1;
+        if (password.length >= 12) strength += 1;
+        
+        // Check for mixed case
+        if (password.match(/([a-z].*[A-Z])|([A-Z].*[a-z])/)) strength += 1;
+        
+        // Check for numbers
+        if (password.match(/([0-9])/)) strength += 1;
+        
+        // Check for special chars
+        if (password.match(/([!,%,&,@,#,$,^,*,?,_,~])/)) strength += 1;
+        
+        // Cap strength at 4
+        strength = Math.min(strength, 4);
+        
+        strengthIndicator.setAttribute('data-strength', strength);
+    });
+    
+    // Real-time password match checking
+    const password = document.getElementById('password');
+    const confirmPassword = document.querySelector('input[name="confirm_password"]');
+    
+    if (confirmPassword) {
+        confirmPassword.addEventListener('input', function() {
+            if (this.value !== password.value) {
+                this.setCustomValidity("Passwords don't match");
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+</script>
+
+{% endblock content %}
